@@ -15,4 +15,11 @@ public class ChatMessage {
     private String from;
     private String to; //귓속말을 받을 사람
     private String roomId; //방 id
+
+    //06.20
+    public ChatMessage(String from, String message) {
+        this.from = from;
+        this.message = message;
+    }
+
 }

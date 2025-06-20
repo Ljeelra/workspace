@@ -3,9 +3,9 @@ package com.example.backendproject.purewebsocket;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 
-@Controller
+//@Controller
 public class HtmlController {
-    @GetMapping("/")
+    //@GetMapping("/")
     public String index() {
         //return "redirect:/purechat2.html";
         return "redirect:/stompchat2.html";
