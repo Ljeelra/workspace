@@ -1,7 +1,6 @@
 package com.example.backendproject.stompwensocket.controller;
 
 import com.example.backendproject.stompwensocket.dto.ChatMessage;
-import com.example.backendproject.stompwensocket.gpt.GPTService;
 import com.example.backendproject.stompwensocket.redis.RedisPublisher;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -19,36 +18,12 @@ import java.time.Clock;
 public class ChatController {
 
     //단일 브로드캐스트(방이 동적으로 생성이 안됨)
-//    @MessageMapping("/chat.sendMessage") //클라이언트가 메세지를 보내면
-//    @SendTo("/topic/public") // 메세지를 받음
-//    public ChatMessage sendMessage(ChatMessage message){
-//        System.out.println(message.getMessage());
-//        return message;
-
-    //06.20 gpt 챗봇
-    private final GPTService gptService;
-
-    @MessageMapping("/gpt")
-    public void sendMessageGPT(ChatMessage message) throws Exception {
-
-        template.convertAndSend("/topic/gpt", message); //내가 보낸 메세지 출력
-
-        //GPT 메세지 반환
-        String getResponse = gptService.gptMessage(message.getMessage());
-        ChatMessage chatMessage = new ChatMessage("난 GPT",getResponse);
-        template.convertAndSend("/topic/gpt", chatMessage);
-
-        //        try{
-//            String getResponse = gptService.gptMessage(message.getMessage());
-//            ChatMessage chatMessage = new ChatMessage("난 GPT",getResponse);
-//            template.convertAndSend("/topic/gpt", chatMessage);
-//        } catch (Exception e) {
-//            // 오류 응답 전달
-//            ChatMessage errorMsg = new ChatMessage("GPT 시스템", "⚠ 오류 발생: " + e.getMessage());
-//            template.convertAndSend("/topic/gpt", errorMsg);
-//        }
-    }
-
+    //@MessageMapping("/chat.sendMessage") //클라이언트가 메세지를 보내면
+    //@SendTo("/topic/public") // 메세지를 받음
+    //public ChatMessage sendMessage(ChatMessage message){
+        //System.out.println(message.getMessage());
+    //    return message;
+    //}
 
     //서버가 클라이언트에게 수동으로 메세지를 보낼 수 있도록 하는 클래스
     private final SimpMessagingTemplate template;
