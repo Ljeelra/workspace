@@ -32,9 +32,10 @@ services:
       DB_PORT: ${DB_PORT}
       DB_USER: ${DB_USER}
       DB_PASS: ${DB_PASS}
+      REDIS_HOST: ${REDIS_HOST}
     depends_on:
-      database:
-        condition: service_healthy
+      - database
+      - redis
 
   backend2:  # 서비스 이름은 컨테이너간 통신하기 위한 이름
     image: backend
@@ -45,9 +46,10 @@ services:
       DB_PORT: ${DB_PORT}
       DB_USER: ${DB_USER}
       DB_PASS: ${DB_PASS}
+      REDIS_HOST: ${REDIS_HOST}
     depends_on:
-      database:
-        condition: service_healthy
+      - database
+      - redis
 
   backend3:  # 서비스 이름은 컨테이너간 통신하기 위한 이름
     image: backend
@@ -58,9 +60,11 @@ services:
       DB_PORT: ${DB_PORT}
       DB_USER: ${DB_USER}
       DB_PASS: ${DB_PASS}
+      REDIS_HOST: ${REDIS_HOST}
     depends_on:
-      database:
-        condition: service_healthy
+      - database
+      - redis
+
 
   nginx:
     image: nginx:1.25
