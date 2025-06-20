@@ -30,8 +30,13 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
+        //단체 채팅을 위한 엔드포인트
         registry.addEndpoint("/ws-chat")
                 .setHandshakeHandler(new CustomHandshakeHandler())
+                .setAllowedOriginPatterns("*");
+
+        //gpt를위한 엔드포인트
+        registry.addEndpoint("/ws-gpt")
                 .setAllowedOriginPatterns("*");
     }
 

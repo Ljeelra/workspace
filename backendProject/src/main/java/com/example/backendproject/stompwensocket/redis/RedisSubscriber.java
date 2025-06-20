@@ -28,7 +28,6 @@ public class RedisSubscriber implements MessageListener {
                 // 일반 메시지
                 simpMessagingTemplate.convertAndSend("/topic/room." + chatMessage.getRoomId(), chatMessage);
 
-
             }
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
