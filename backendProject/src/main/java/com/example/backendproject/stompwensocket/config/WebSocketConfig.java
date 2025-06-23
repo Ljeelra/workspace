@@ -5,8 +5,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;
 import org.springframework.web.socket.config.annotation.*;
 
-@Configuration
-@EnableWebSocketMessageBroker
+@Configuration//이 클래스는 스프링의 설정 클래스라고 등록하는 어노테이션
+@EnableWebSocketMessageBroker// Stomp 메시지 브로커 기능을 활성화하는 어노테이션
 public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
     @Override

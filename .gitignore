@@ -1,0 +1,7 @@
+CICD/volumes
+Data/volumes
+backendProject/.gradle
+backendProject/.idea
+backsendProject/build
+CICD/jenkins
+.idea

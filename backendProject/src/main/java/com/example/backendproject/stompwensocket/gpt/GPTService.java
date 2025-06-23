@@ -19,7 +19,6 @@ public class GPTService {
 
     public String gptMessage(String message) throws Exception{
 
-
         //API 호출을 위한 본문 작성
         Map<String,Object> requestBody  = new HashMap<>();
         requestBody .put("model","gpt-4o");
