@@ -9,10 +9,11 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserDTO {
+public class UserProfileDTO {
 
-    private Long id;
-    private String userid;
+    private String username;
+    private String email;
+    private String phone;
+    private String address;
 
-    private UserProfileDTO profile;
 }
