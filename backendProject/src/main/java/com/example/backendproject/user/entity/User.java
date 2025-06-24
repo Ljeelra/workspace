@@ -12,7 +12,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-public class User {
+public class User extends BaseTime{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
