@@ -3,6 +3,7 @@ package com.example.backendproject.Auth.service;
 import com.example.backendproject.Auth.DTO.LoginRequestDTO;
 import com.example.backendproject.Auth.DTO.SignUpRequestDTO;
 import com.example.backendproject.user.DTO.UserDTO;
+import com.example.backendproject.user.DTO.UserProfileDTO;
 import com.example.backendproject.user.entity.User;
 import com.example.backendproject.user.entity.UserProfile;
 import com.example.backendproject.user.repository.UserRepository;
@@ -40,8 +41,7 @@ public class AuthService{
         userRepository.save(user);
     }
 
-    public UserDTO
-    login(LoginRequestDTO loginRequestDTO){
+    public UserDTO login(LoginRequestDTO loginRequestDTO){
         User user = userRepository.findByUserid(loginRequestDTO.getUserid())
                 .orElseThrow(()->new RuntimeException("해당 유저를 찾을 수 없습니다."));
 
@@ -53,10 +53,11 @@ public class AuthService{
         userDTO.setId(user.getId());
         userDTO.setUserid(user.getUserid());
 
-        userDTO.setUsername(user.getUserProfile().getUsername());
-        userDTO.setEmail(user.getUserProfile().getEmail());
-        userDTO.setPhone(user.getUserProfile().getPhone());
-        userDTO.setAddress(user.getUserProfile().getAddress());
+        UserProfileDTO userProfileDTO = new UserProfileDTO();
+        userProfileDTO.setUsername(user.getUserProfile().getUsername());
+        userProfileDTO.setEmail(user.getUserProfile().getEmail());
+        userProfileDTO.setPhone(user.getUserProfile().getPhone());
+        userProfileDTO.setAddress(user.getUserProfile().getAddress());
 
         return userDTO;
 
