@@ -14,13 +14,13 @@ import java.time.LocalDateTime;
 @Setter
 
 @EntityListeners(AuditingEntityListener.class)
-//JPA엔티티의 생성/수정 시점을 자동으로 기록하도록하는 이벤트 리스너로 동작하도록하는 어노테이션
+//JPA엔티티의 생성/수정 시점을 자동으로 기록하도록 하는 이벤트 리스너로 동작하게 하는 어노테이션
 
 @MappedSuperclass
-//이 클래스를 상속받는 엔티티들은 이 클래스의 필드를 컬럼으로 포함시켜라는 어노테이션
+//이 클래스를 상속받는 엔티티들은 이 클래스의 필드를 컬럼으로 포함시키라는 어노테이션
 public abstract class BaseTime {
 
-    //엔티티가 저잘될때 자동으로 시간을 기록
+    //엔티티가 저장될때 자동으로 시간을 기록
     @CreatedDate
     private LocalDateTime created_date;
 

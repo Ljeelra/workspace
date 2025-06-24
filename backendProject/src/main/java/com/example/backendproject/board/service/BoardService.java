@@ -6,6 +6,7 @@ import com.example.backendproject.board.repository.BatchRepository;
 import com.example.backendproject.board.repository.BoardRepository;
 import com.example.backendproject.user.entity.User;
 import com.example.backendproject.user.repository.UserRepository;
+import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -25,6 +26,7 @@ public class BoardService {
     private final BoardRepository boardRepository;
     private final UserRepository userRepository;
     private final BatchRepository batchRepository;
+    private final EntityManager em;
 
     /** 글 등록 **/
     @Transactional
@@ -127,8 +129,6 @@ public class BoardService {
     }
 
 
-
-
     /** 배치작업 **/
     @Transactional
     public void batchSaveBoard(List<BoardDTO> boardDTOList) {
@@ -138,7 +138,7 @@ public class BoardService {
         for (int i = 0; i < boardDTOList.size(); i+=batchsize) { //i는 1000씩 증가
             //전체 데이터를 1000개씩 잘라서 배치리스트에 담습니다.
 
-            int end = Math.min(boardDTOList.size(), i+batchsize); //두개의 숫자중에 작은 숫자를 반황ㄴ
+            int end = Math.min(boardDTOList.size(), i+batchsize); //두개의 숫자중에 작은 숫자를 반환
             List<BoardDTO> batchList = boardDTOList.subList(i, end);
 
             //전체 데이터에서 1000씩 작업을 하는데 마지막 데이터가 1000개가 안될수도있으니
@@ -159,7 +159,22 @@ public class BoardService {
 
         Long end = System.currentTimeMillis();
         log.info("[BOARD][BATCH] 전체 저장 소요 시간(ms): {}", (end - start));
+        log.info("[BOARD][BATCH] 데이터 사이즈 : {}", boardDTOList.size());
     }
 
+    @Transactional
+    public void boardSaveAll(List<Board> boardList) {
+        long start = System.currentTimeMillis();
+        for(int i=0; i<boardList.size(); i++){
+            em.persist(boardList.get(i));
+            if( i % 1000 == 0){
+                em.flush();
+                em.clear();
+            }
+        }
+        long end = System.currentTimeMillis();
+        System.out.println("JPA Board saveAll 저장 소요 시간(ms): " + (end - start));
+
+    }
 
 }
