@@ -3,12 +3,16 @@ package com.example.backendproject.board.controller;
 import com.example.backendproject.board.DTO.BoardDTO;
 import com.example.backendproject.board.entity.Board;
 import com.example.backendproject.board.service.BoardService;
+import com.example.backendproject.security.core.CustomUserDetails;
+import com.example.backendproject.user.repository.UserRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -19,11 +23,19 @@ import java.util.List;
 public class BoardController {
 
     private final BoardService boardService;
+    private final UserRepository userRepository;
 
     /** 글 작성 **/
+//    @PostMapping
+//    public ResponseEntity<BoardDTO> createBoard(@RequestBody BoardDTO boardDTO) throws JsonProcessingException {
+//        System.out.println("boardDTO 값 "+new ObjectMapper().writeValueAsString(boardDTO));
+//        BoardDTO created = boardService.createBoard(boardDTO);
+//        return ResponseEntity.status(HttpStatus.CREATED).body(created);
+//    }
     @PostMapping
-    public ResponseEntity<BoardDTO> createBoard(@RequestBody BoardDTO boardDTO) throws JsonProcessingException {
-        System.out.println("boardDTO 값 "+new ObjectMapper().writeValueAsString(boardDTO));
+    public ResponseEntity<BoardDTO> createBoard(@AuthenticationPrincipal CustomUserDetails customuserDetails, @RequestBody BoardDTO boardDTO){
+        Long id = customuserDetails.getId();
+        boardDTO.setUser_id(id);
         BoardDTO created = boardService.createBoard(boardDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(created);
     }
@@ -33,18 +45,34 @@ public class BoardController {
     public ResponseEntity<BoardDTO> getBoardDetail(@PathVariable Long id) {
         return ResponseEntity.ok(boardService.getBoardDetail(id));
     }
+//    @GetMapping("/{id}")
+//    public ResponseEntity<BoardDTO> getBoardDetail(@AuthenticationPrincipal CustomUserDetails customuserDetails, @PathVariable Long id) {
+//        Long userid = customuserDetails.getId();
+//        if(userRepository.findById(userid).isEmpty()){
+//            throw new UsernameNotFoundException("해당 유저가 존재하지 않습니다.");
+//        }
+//        return ResponseEntity.ok(boardService.getBoardDetail(id));
+//    }
 
     /** 게시글 수정 **/
+//    @PutMapping("/{id}")
+//    public ResponseEntity<BoardDTO> updateBoard(@AuthenticationPrincipal CustomUserDetails customuserDetails, @PathVariable Long id, @RequestBody BoardDTO boardDTO) {
+//
+//        return ResponseEntity.ok(boardService.updateBoard(id, boardDTO));
+//    }
     @PutMapping("/{id}")
-    public ResponseEntity<BoardDTO> updateBoard(@PathVariable Long id, @RequestBody BoardDTO boardDTO) {
+    public ResponseEntity<BoardDTO> updateBoard(@AuthenticationPrincipal CustomUserDetails customuserDetails, @PathVariable Long id, @RequestBody BoardDTO boardDTO) {
         return ResponseEntity.ok(boardService.updateBoard(id, boardDTO));
     }
 
     /** 게시글 삭제 **/
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteBoard(@PathVariable Long id) {
-        boardService.deleteBoard(id);
-        return ResponseEntity.noContent().build();
+    public ResponseEntity<?> deleteBoard(
+            @AuthenticationPrincipal CustomUserDetails customUserDetails,
+            @PathVariable Long id) {
+        Long userid = customUserDetails.getId();
+        boardService.deleteBoard(userid,id);
+        return ResponseEntity.ok("게시글이 성공적으로 삭제되었습니다.");
     }
 
     //페이징 적용 전

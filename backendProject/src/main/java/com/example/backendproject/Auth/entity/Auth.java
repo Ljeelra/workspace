@@ -31,4 +31,22 @@ public class Auth {
     @JoinColumn(name = "user_id")
     private User user;
 
+    public Auth(User user, String refreshToken, String accessToken, String tokenType ) {
+        this.user = user;
+        this.refreshToken = refreshToken;
+        this.accessToken = accessToken;
+        this.tokenType = tokenType;
+    }
+
+    // updateAccessToken 메서드 추가
+    //토큰값을 업데이트 해주는 메서드
+    public void updateAccessToken(String newAccessToken) {
+        this.accessToken = newAccessToken;
+    }
+
+    // updateRefreshToken 메서드 추가
+    public void updateRefreshToken(String newRefreshToken) {
+        this.refreshToken = newRefreshToken;
+    }
+
 }

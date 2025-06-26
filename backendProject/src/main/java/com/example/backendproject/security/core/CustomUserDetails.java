@@ -1,4 +1,4 @@
-package com.example.backendproject.security.config;
+package com.example.backendproject.security.core;
 
 import com.example.backendproject.user.entity.User;
 import lombok.RequiredArgsConstructor;
@@ -8,12 +8,12 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
 
 @RequiredArgsConstructor
 public class CustomUserDetails implements UserDetails {
     //UserDetails <- 사용자 정보를 담는 인터페이스
     //로그인한 사용자의 정보를 담아두는 역할
+    //=>유저정보 조회해서 객체 만든것
 
     private final User user;
 
