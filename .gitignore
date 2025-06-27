@@ -5,3 +5,4 @@ backendProject/.idea
 backsendProject/build
 CICD/jenkins
 .idea
+monitoring/http/volumes
