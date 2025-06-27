@@ -45,7 +45,7 @@ public class SecurityConfig {
                 //CSRF 보호 기능 비활성화
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests((auth)->auth
-                        //인증이 필요없는 경로
+
                                 //인증 필요없음
                                 .requestMatchers("/","/index.html", "/*.html", "/favicon.ico",
                                         "/css/**", "/fetchWithAuth.js","/js/**", "/images/**",
@@ -59,7 +59,8 @@ public class SecurityConfig {
                                         "/oauth2/**",         // 소셜 로그인 엔드포인트는 누구나 접근
                                         "/login/**",          // 스프링 시큐리티 내부 로그인 관련 엔드포인트
                                         "/ws-gpt", "/ws-chat", // 웹소켓 핸드셰이크
-                                        "/actuator/prometheus" //프로메테우스
+                                        "/actuator/prometheus", //프로메테우스
+                                        "/exception"
                                 ).permitAll() // 웹소켓 핸드셰이크는 모두 허용!
 
                                 .requestMatchers(
