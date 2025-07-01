@@ -10,9 +10,10 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/exception")
 public class TestController {
 
-    @GetMapping
-    public ResponseEntity<ErrorMessage> test() {
-        throw new RuntimeException("테스트 중입니다.");
-    }
+//    @GetMapping
+//    public ResponseEntity<ErrorMessage> test() {
+//        throw new RuntimeException("테스트 중입니다.");
+//    }
+
 }
 

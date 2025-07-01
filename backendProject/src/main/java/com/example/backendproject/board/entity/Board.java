@@ -31,6 +31,9 @@ public class Board extends BaseTime {
 
     private String batchkey;
 
+    @Column(name = "view_count",nullable = false)
+    private Long viewCount = 0L; //기본값 0으로 초기화
+
     //아래는 글을 작성한 유저 정보Add commentMore actions
     // 연관관계 맵핑
     //다대일
