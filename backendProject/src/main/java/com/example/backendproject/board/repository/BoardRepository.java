@@ -39,7 +39,8 @@ public interface BoardRepository extends JpaRepository<Board,Long> {
     //페이징 전체 목록
     @Query("SELECT new com.example.backendproject.board.DTO.BoardDTO(" +
             "b.id, b.title, b.content,b.user.userProfile.username, b.user.id,b.created_date, b.updated_date, b.viewCount) " +
-            "FROM Board b ")
+            "FROM Board b "
+            +"ORDER BY b.id desc")
     //  + "ORDER BY b.title DESC") //쿼리로 정렬
     Page<BoardDTO> findAllPaging(Pageable pageable);
     //페이징 처리 결과를 담는 페이징 객체입니다.

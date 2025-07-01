@@ -6,4 +6,4 @@ backsendProject/build
 CICD/jenkins
 .idea
 monitoring/http/volumes
-/logs/app.log
+/logs/
