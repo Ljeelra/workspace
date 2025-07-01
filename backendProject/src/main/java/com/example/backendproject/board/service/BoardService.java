@@ -1,6 +1,9 @@
 package com.example.backendproject.board.service;
 
 import com.example.backendproject.board.DTO.BoardDTO;
+import com.example.backendproject.board.elasticsearch.dto.BoardEsDocument;
+import com.example.backendproject.board.elasticsearch.repository.BoardEsRepository;
+import com.example.backendproject.board.elasticsearch.service.BoardEsService;
 import com.example.backendproject.board.entity.Board;
 import com.example.backendproject.board.repository.BatchRepository;
 import com.example.backendproject.board.repository.BoardRepository;
@@ -14,6 +17,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -27,6 +31,10 @@ public class BoardService {
     private final UserRepository userRepository;
     private final BatchRepository batchRepository;
     private final EntityManager em;
+
+    //25.06.30
+    private final BoardEsService boardEsService;
+    private final BoardEsRepository boardEsRepository;
 
     /** 글 등록 **/
     @Transactional
@@ -49,14 +57,35 @@ public class BoardService {
         board.setUser(user);
         Board saved = boardRepository.save(board);
 
+        //엘라스틱서치에 저장 시작
+        BoardEsDocument doc = BoardEsDocument.builder()
+                .id(String.valueOf(board.getId()))
+                .title(board.getTitle())
+                .content(board.getContent())
+                .userId(board.getUser().getId())
+                .created_date(String.valueOf(board.getCreated_date()))
+                .updated_date(String.valueOf(board.getUpdated_date()))
+                .build();
+        boardEsService.save(doc);
+
         return toDTO(saved);
     }
 
     /** 게시글 상세 조회 **/
-    @Transactional(readOnly = true)
+    @Transactional//(readOnly = true)
     public BoardDTO getBoardDetail(Long boardId) {
         Board board = boardRepository.findById(boardId)
                 .orElseThrow(() -> new IllegalArgumentException("게시글 없음: " + boardId));
+
+        //mysql 조회수 증가
+        board.setViewCount(board.getViewCount() + 1);
+
+        //엘라스틱서치 조회수 증가
+        BoardEsDocument esDocument = boardEsRepository.findById(String.valueOf(boardId))
+                .orElseThrow(()->new IllegalArgumentException("ES에 게시글 없음: "+boardId));
+        esDocument.setViewCount(board.getViewCount());
+        boardEsService.save(esDocument);
+
         return toDTO(board);
     }
 
@@ -68,6 +97,19 @@ public class BoardService {
         board.setTitle(dto.getTitle());
         board.setContent(dto.getContent());
         boardRepository.save(board);
+
+        //엘라스틱서치에 데이터 수정
+        //엘라스틱서치에 저장 시작
+        BoardEsDocument doc = BoardEsDocument.builder()
+                .id(String.valueOf(board.getId()))
+                .title(board.getTitle())
+                .content(board.getContent())
+                .userId(board.getUser().getId())
+                .created_date(String.valueOf(board.getCreated_date()))
+                .updated_date(String.valueOf(board.getUpdated_date()))
+                .build();
+        boardEsService.save(doc);
+
         return toDTO(board);
     }
 
@@ -90,7 +132,11 @@ public class BoardService {
         if (!boardRepository.existsById(boardId))
             throw new IllegalArgumentException("게시글 없음: " + boardId);
 
+        //mysql 삭제
         boardRepository.deleteById(boardId);
+
+        //엘라스틱서치 삭제
+        boardEsService.deleteById(String.valueOf(boardId));
     }
 
 
@@ -138,6 +184,7 @@ public class BoardService {
 
         dto.setCreated_date(board.getCreated_date());
         dto.setUpdated_date(board.getUpdated_date());
+        dto.setViewCount(board.getViewCount());
         return dto;
     }
 
@@ -168,6 +215,21 @@ public class BoardService {
             // 1. MySQL로 INSERT
             batchRepository.batchInsert(batchList);
 
+            // 2. Mysql에 insert한 데이터를 다시 조회Add commentMore actions
+            List<BoardDTO> saveBoards = batchRepository.findByBatchKey(batchKey);
+
+            // 3.엘라스틱서치용으로변환
+            List<BoardEsDocument> documents = saveBoards.stream()
+                    .map(BoardEsDocument::from) //DTO -> 엘라스틱서치용dto로 변환
+                    .toList();
+
+            try {
+                // 4. 엘라스틱서치 bulk 인덱싱
+                boardEsService.bulkIndexInsert(documents);
+            }
+            catch (IOException e){
+                log.error("[BOARD][BATCH] ElasticSearch 벌크 인덱싱 실패:{}",e.getMessage(),e);
+            }
         }
 
         Long end = System.currentTimeMillis();
@@ -189,5 +251,7 @@ public class BoardService {
         System.out.println("JPA Board saveAll 저장 소요 시간(ms): " + (end - start));
 
     }
+
+
 
 }
